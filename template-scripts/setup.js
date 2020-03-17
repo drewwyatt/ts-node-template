@@ -4,6 +4,13 @@ const path = require('path')
 const prettier = require('prettier')
 const readline = require('readline')
 
+const {
+  PACKAGE_JSON_PATH,
+  POSTINSTALL_SCRIPT,
+  PRETTIER_CONFIG_PATH,
+  README_PATH,
+} = require('./consts')
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -13,10 +20,6 @@ const DEFAULT_NAME = process
   .cwd()
   .split('/')
   .reduce((_, curr) => curr, '')
-
-const PACKAGE_JSON_PATH = path.resolve('./package.json')
-const PRETTIER_CONFIG_PATH = path.resolve('./prettierrc.yaml')
-const README_PATH = path.resolve('./README.md')
 
 const handleError = err => {
   console.error('[ERROR] There was a problem setting up this project.')
@@ -53,6 +56,7 @@ const updatePackageJson = async projectName => {
   console.log('👷‍♀️ updating package.json....')
   const packageJson = JSON.parse(fs.readFileSync(PACKAGE_JSON_PATH, 'utf8'))
   packageJson.name = projectName
+  packageJson.scripts.postinstall = POSTINSTALL_SCRIPT
   fs.writeFileSync(
     PACKAGE_JSON_PATH,
     prettier.format(JSON.stringify(packageJson), {
