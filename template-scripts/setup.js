@@ -41,6 +41,7 @@ rl.question(`Enter project name or leave blank for "${DEFAULT_NAME}": `, name =>
     console.log('Setting up project with name:', projectName)
     updatePackageJson(projectName)
       .then(updateReadme)
+      .then(cleanup)
       .then(() => rl.close())
       .catch(handleError)
   } catch (err) {
@@ -67,6 +68,12 @@ const updateReadme = async projectName => {
   const readme = fs.readFileSync(README_PATH, 'utf8')
   fs.writeFileSync(README_PATH, readme.replace(/# (.*)/, ['#', projectName].join(' ')))
   return projectName
+}
+
+const cleanup = async () => {
+  console.log('👷‍♀️ removing setup script...')
+  fs.rmdirSync(__dirname, { recursive: true })
+  return
 }
 
 rl.on('close', () => {
